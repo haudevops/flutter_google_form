@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_google_form/launch_form/launch_form_view.dart';
 import 'package:flutter_google_form/model/create_form_model.dart';
+import 'package:flutter_google_form/utils/constants.dart';
+import 'package:flutter_google_form/utils/screen_argument.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateFormView extends StatefulWidget {
@@ -19,6 +23,14 @@ class _CreateFormViewState extends State<CreateFormView> {
   final titleController = TextEditingController();
   final titleDescriptionController = TextEditingController();
   final paragraphController = TextEditingController();
+
+  // formKey
+  final formKeyTitle = GlobalKey<FormState>();
+  final formKeyTitleDescription = GlobalKey<FormState>();
+
+  // focusNode
+  final FocusNode focusNodeTitle = FocusNode();
+  final FocusNode focusNodeTitleDescription = FocusNode();
 
   // focus
   final focusOnBackGround = FocusNode();
@@ -54,7 +66,9 @@ class _CreateFormViewState extends State<CreateFormView> {
         setState(() {
           createForm.add(CreateFormModel(
               question: 'Untitled Question',
-              option: [ListOptionModel(option: 'Option 1', idOption: 'Option 1')]));
+              option: [
+                ListOptionModel(option: 'Option 1', idOption: 'Option 1')
+              ]));
         });
         break;
       case 1:
@@ -62,7 +76,8 @@ class _CreateFormViewState extends State<CreateFormView> {
       case 3:
       case 4:
       case 5:
-        Fluttertoast.showToast(msg: 'Functions are not yet developed');
+        Fluttertoast.showToast(
+            msg: 'Functions are not yet developed', gravity: ToastGravity.TOP);
         break;
     }
   }
@@ -116,7 +131,7 @@ class _CreateFormViewState extends State<CreateFormView> {
   Widget titleFormWidget() {
     return Container(
       padding: const EdgeInsets.all(8),
-      height: 120,
+      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Colors.white,
@@ -126,49 +141,50 @@ class _CreateFormViewState extends State<CreateFormView> {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: TextFormField(
-              controller: titleController,
-              style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 25),
-              decoration: const InputDecoration(
+          TextFormField(
+            key: formKeyTitle,
+            controller: titleController,
+            focusNode: focusNodeTitle,
+            style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 20),
+            decoration: const InputDecoration(
                 labelStyle:
-                    TextStyle(fontWeight: FontWeight.w400, fontSize: 25),
+                    TextStyle(fontWeight: FontWeight.w400, fontSize: 20),
                 border: InputBorder.none,
                 labelText: 'Untitled Form',
-              ),
-              onFieldSubmitted: (value) {
-                setState(() {
-                  titleController.text = value;
-                });
-              },
-              onChanged: (value) {
-                setState(() {
-                  titleController.text = value;
-                });
-              },
-            ),
+                contentPadding: EdgeInsets.zero),
+            onFieldSubmitted: (value) {
+              setState(() {
+                titleController.text = value;
+              });
+              focusNodeTitleDescription.requestFocus();
+            },
+            onChanged: (value) {
+              setState(() {
+                titleController.text = value;
+              });
+            },
           ),
-          Expanded(
-            child: TextFormField(
-              controller: titleDescriptionController,
-              style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
-              decoration: const InputDecoration(
+          TextFormField(
+            key: formKeyTitleDescription,
+            controller: titleDescriptionController,
+            focusNode: focusNodeTitleDescription,
+            style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+            decoration: const InputDecoration(
                 labelStyle:
-                    TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
+                    TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
                 border: InputBorder.none,
-                labelText: 'Form Descriptio',
-              ),
-              onFieldSubmitted: (value) {
-                setState(() {
-                  titleDescriptionController.text = value;
-                });
-              },
-              onChanged: (value) {
-                setState(() {
-                  titleDescriptionController.text = value;
-                });
-              },
-            ),
+                labelText: 'Form Description',
+                contentPadding: EdgeInsets.zero),
+            onFieldSubmitted: (value) {
+              setState(() {
+                titleDescriptionController.text = value;
+              });
+            },
+            onChanged: (value) {
+              setState(() {
+                titleDescriptionController.text = value;
+              });
+            },
           ),
         ],
       ),
@@ -184,7 +200,7 @@ class _CreateFormViewState extends State<CreateFormView> {
         itemCount: createForm.length,
         itemBuilder: (context, index) {
           isOtherOption.add(false);
-          choiceOption.add('Multiple choice');
+          choiceOption.add(Constants.multipleChoice);
 
           return Container(
             padding: const EdgeInsets.all(8),
@@ -221,7 +237,11 @@ class _CreateFormViewState extends State<CreateFormView> {
                     ),
                     GestureDetector(
                         onDoubleTap: () {},
-                        onTap: () {},
+                        onTap: () {
+                          Fluttertoast.showToast(
+                              msg: 'Functions are not yet developed',
+                              gravity: ToastGravity.TOP);
+                        },
                         child: const Icon(
                           Icons.image_outlined,
                           size: 25,
@@ -233,14 +253,14 @@ class _CreateFormViewState extends State<CreateFormView> {
                   itemHeight: 60,
                   elevation: 0,
                   value: choiceOption[index],
-                  items: <String>['Multiple choice', 'Paragraph']
+                  items: <String>[Constants.multipleChoice, Constants.paragraph]
                       .map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Row(
                         children: [
                           Icon(
-                            value == 'Paragraph'
+                            value == Constants.paragraph
                                 ? Icons.menu_outlined
                                 : Icons.check_box_outlined,
                             color: Colors.grey,
@@ -257,13 +277,14 @@ class _CreateFormViewState extends State<CreateFormView> {
                     setState(() {
                       choiceOption[index] = value!;
                       createForm[index].option?.clear();
-                      if (choiceOption[index] == 'Paragraph') {
+                      if (choiceOption[index] == Constants.paragraph) {
+                        createForm[index].isParagraph = true;
                         createForm[index].option?.add(ListOptionModel(
                             option: 'Option', isParagraph: true));
                       } else {
-                        createForm[index]
-                            .option
-                            ?.add(ListOptionModel(option: 'Option', idOption: 'Option 1'));
+                        createForm[index].isParagraph = false;
+                        createForm[index].option?.add(ListOptionModel(
+                            option: 'Option', idOption: 'Option 1'));
                       }
                       createForm[index]
                           .option!
@@ -272,16 +293,25 @@ class _CreateFormViewState extends State<CreateFormView> {
                   },
                 ),
                 const SizedBox(height: 10),
-                choiceOption[index] == 'Paragraph'
+                choiceOption[index] == Constants.paragraph
                     ? TextFormField(
-                        controller: paragraphController,
+                        readOnly: true,
                         decoration: InputDecoration(
                           fillColor: Colors.purple[50],
                           border: InputBorder.none,
                           focusedBorder: const UnderlineInputBorder(),
                           labelText: 'Long-answer text',
                         ),
-                        onFieldSubmitted: (value) {},
+                        onFieldSubmitted: (value) {
+                          setState(() {
+                            createForm[index].option?[0].option = value;
+                          });
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            createForm[index].option?[0].option = value;
+                          });
+                        },
                       )
                     : Column(
                         mainAxisSize: MainAxisSize.min,
@@ -332,10 +362,10 @@ class _CreateFormViewState extends State<CreateFormView> {
                                             createForm[index]
                                                 .option!
                                                 .removeAt(itemIndex);
-                                            createForm[index].option!.sort((a,
-                                                    b) =>
-                                                a.idOption!.compareTo(b.idOption!));
-                                            if(data.isOther!) {
+                                            createForm[index].option!.sort(
+                                                (a, b) => a.idOption!
+                                                    .compareTo(b.idOption!));
+                                            if (data.isOther!) {
                                               isOtherOption[index] = false;
                                             }
                                           });
@@ -361,12 +391,22 @@ class _CreateFormViewState extends State<CreateFormView> {
                                   ? GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          createForm[index].option?.add(
-                                              ListOptionModel(
-                                                  option: 'Option', idOption: 'Option ${createForm[index].option!.length + 1}'));
-                                          createForm[index].option!.sort((a,
-                                                  b) =>
-                                              a.idOption!.compareTo(b.idOption!));
+                                          if (createForm[index].option!.length >
+                                              5) {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Option length cannot be greater than 5',
+                                                gravity: ToastGravity.TOP);
+                                          } else {
+                                            createForm[index].option?.add(
+                                                ListOptionModel(
+                                                    option: 'Option',
+                                                    idOption:
+                                                        'Option ${createForm[index].option!.length + 1}'));
+                                            createForm[index].option!.sort(
+                                                (a, b) => a.idOption!
+                                                    .compareTo(b.idOption!));
+                                          }
                                         });
                                       },
                                       child: Text(
@@ -386,11 +426,13 @@ class _CreateFormViewState extends State<CreateFormView> {
                                                 setState(() {
                                                   createForm[index].option?.add(
                                                       ListOptionModel(
-                                                          option: 'Option', idOption: 'Option ${createForm[index].option!.length + 1}'));
+                                                          option: 'Option',
+                                                          idOption:
+                                                              'Option ${createForm[index].option!.length + 1}'));
                                                   createForm[index]
                                                       .option!
-                                                      .sort((a, b) => a.idOption!
-                                                          .compareTo(
+                                                      .sort((a, b) =>
+                                                          a.idOption!.compareTo(
                                                               b.idOption!));
                                                 }); // will not work here
                                               }),
@@ -398,7 +440,7 @@ class _CreateFormViewState extends State<CreateFormView> {
                                             text: ' or ',
                                             style: TextStyle(fontSize: 16)),
                                         TextSpan(
-                                            text: 'Add "Other option"',
+                                            text: 'Add "Other"',
                                             style: TextStyle(
                                                 color: Colors.blue,
                                                 fontSize: 16),
@@ -408,11 +450,12 @@ class _CreateFormViewState extends State<CreateFormView> {
                                                   createForm[index].option?.add(
                                                       ListOptionModel(
                                                           option: 'Other',
-                                                          isOther: true, idOption: 'Other'));
+                                                          isOther: true,
+                                                          idOption: 'Other'));
                                                   createForm[index]
                                                       .option!
-                                                      .sort((a, b) => a.idOption!
-                                                          .compareTo(
+                                                      .sort((a, b) =>
+                                                          a.idOption!.compareTo(
                                                               b.idOption!));
                                                   isOtherOption[index] =
                                                       !isOtherOption[index];
@@ -423,7 +466,54 @@ class _CreateFormViewState extends State<CreateFormView> {
                             ),
                           ),
                         ],
+                      ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 30,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              createForm.removeAt(index);
+                            });
+                          },
+                          child: const Icon(Icons.delete,
+                              color: Colors.grey, size: 25)),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 0.5,
+                        height: MediaQuery.of(context).size.height,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Required',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        height: 33,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Switch(
+                            value: createForm[index].isRequired!,
+                            activeColor: Colors.purple,
+                            onChanged: (bool value) {
+                              // This is called when the user toggles the switch.
+                              setState(() {
+                                createForm[index].isRequired = value;
+                              });
+                            },
+                          ),
+                        ),
                       )
+                    ],
+                  ),
+                )
               ],
             ),
           );
@@ -438,16 +528,37 @@ class _CreateFormViewState extends State<CreateFormView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
+          SizedBox(
+            height: 30,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                bool validate = validateData();
+                if (validate) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => LaunchFormView(
+                                data: ScreenArguments(
+                                    arg1: createForm,
+                                    arg2: titleController.text,
+                                    arg3: titleDescriptionController.text),
+                              )));
+                }
+              },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
-              child: Text('Submit',
+              child: const Text('Submit',
                   style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
           ),
           TextButton(
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  createForm.clear();
+                  isOtherOption.clear();
+                  titleController.clear();
+                  titleDescriptionController.clear();
+                });
+              },
               child: const Text(
                 'Clear Form',
                 style: TextStyle(fontSize: 16, color: Colors.purple),
@@ -455,5 +566,25 @@ class _CreateFormViewState extends State<CreateFormView> {
         ],
       ),
     );
+  }
+
+  bool validateData() {
+    if (titleController.text.isEmpty) {
+      Scrollable.ensureVisible(formKeyTitle.currentContext!);
+      Fluttertoast.showToast(
+          msg: 'Untitled Form can not empty', gravity: ToastGravity.TOP);
+      focusNodeTitle.requestFocus();
+      return false;
+    }
+
+    if (titleDescriptionController.text.isEmpty) {
+      Scrollable.ensureVisible(formKeyTitleDescription.currentContext!);
+      Fluttertoast.showToast(
+          msg: 'Form Description can not empty', gravity: ToastGravity.TOP);
+      focusNodeTitleDescription.requestFocus();
+      return false;
+    }
+
+    return true;
   }
 }
