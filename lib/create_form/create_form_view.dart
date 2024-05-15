@@ -503,7 +503,7 @@ class _CreateFormViewState extends State<CreateFormView> {
                             value: createForm[index].isRequired!,
                             activeColor: Colors.purple,
                             onChanged: (bool value) {
-                              // This is called when the user toggles the switch.
+                              print('value: $value');
                               setState(() {
                                 createForm[index].isRequired = value;
                               });
@@ -528,6 +528,19 @@ class _CreateFormViewState extends State<CreateFormView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          TextButton(
+              onPressed: () {
+                setState(() {
+                  createForm.clear();
+                  isOtherOption.clear();
+                  titleController.clear();
+                  titleDescriptionController.clear();
+                });
+              },
+              child: const Text(
+                'Clear Form',
+                style: TextStyle(fontSize: 16, color: Colors.purple),
+              )),
           SizedBox(
             height: 30,
             child: ElevatedButton(
@@ -550,19 +563,6 @@ class _CreateFormViewState extends State<CreateFormView> {
                   style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
           ),
-          TextButton(
-              onPressed: () {
-                setState(() {
-                  createForm.clear();
-                  isOtherOption.clear();
-                  titleController.clear();
-                  titleDescriptionController.clear();
-                });
-              },
-              child: const Text(
-                'Clear Form',
-                style: TextStyle(fontSize: 16, color: Colors.purple),
-              ))
         ],
       ),
     );

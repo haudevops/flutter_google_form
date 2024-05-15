@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_google_form/model/create_form_model.dart';
+import 'package:flutter_google_form/page.dart';
 import 'package:flutter_google_form/utils/screen_argument.dart';
 import 'package:flutter_google_form/widget/pie_chart.dart';
 
@@ -30,16 +31,22 @@ class _ResultFormViewState extends State<ResultFormView> {
     return Scaffold(
       backgroundColor: Colors.purple[50],
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+        height: MediaQuery
+            .of(context)
+            .size
+            .height,
         margin: const EdgeInsets.all(5),
         child: ListView(
           children: [
             titleFormWidget(),
             const SizedBox(height: 10),
             questionWidget(),
-            // const SizedBox(height: 10),
-            // submitWidget()
+            const SizedBox(height: 10),
+            submitWidget()
           ],
         ),
       ),
@@ -49,12 +56,15 @@ class _ResultFormViewState extends State<ResultFormView> {
   Widget titleFormWidget() {
     return Container(
       padding: const EdgeInsets.all(8),
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Colors.white,
           border:
-              const Border(top: BorderSide(width: 5, color: Colors.purple))),
+          const Border(top: BorderSide(width: 5, color: Colors.purple))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +92,10 @@ class _ResultFormViewState extends State<ResultFormView> {
         itemCount: createForm.length,
         itemBuilder: (context, index) {
           return Container(
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
             padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
@@ -103,15 +116,51 @@ class _ResultFormViewState extends State<ResultFormView> {
                 const SizedBox(height: 10),
                 createForm[index].isParagraph!
                     ? Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(createForm[index].option?[0].option ?? ''))
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(createForm[index].option?[0].option ?? ''))
                     : PieChartView(
-                        data: ScreenArguments(arg1: createForm[index].option),
-                      ),
+                  data: ScreenArguments(arg1: createForm[index].option),
+                ),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget submitWidget() {
+    return Visibility(
+      visible: createForm.isNotEmpty,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            height: 30,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+              child: const Text('Back',
+                  style: TextStyle(fontSize: 16, color: Colors.purple)),
+            ),
+          ),
+          SizedBox(
+            height: 30,
+            child: ElevatedButton(
+              onPressed: () {
+                createForm.clear();
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (_) => const CreateFormView()), (
+                        route) => false);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
+              child: const Text('Create new form',
+                  style: TextStyle(fontSize: 16, color: Colors.white)),
+            ),
+          ),
+        ],
       ),
     );
   }
